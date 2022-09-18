@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "dgSpecHash": "Y4l8JGbzgU4aCJoGyIubvQ8PN3xY7O7R7iHd8Ybfa4xqZg2SyII6BlHJn/MV97xRX0knpXJdtmauwrZ6Kd/s4Q==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\Aston\\OneDrive\\Рабочий стол\\Siyovush Astonzoda API Exam\\Infrastructure\\Infrastructure.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Aston\\.nuget\\packages\\dapper\\2.0.123\\dapper.2.0.123.nupkg.sha512",
+    "C:\\Users\\Aston\\.nuget\\packages\\npgsql\\6.0.6\\npgsql.6.0.6.nupkg.sha512",
+    "C:\\Users\\Aston\\.nuget\\packages\\system.runtime.compilerservices.unsafe\\6.0.0\\system.runtime.compilerservices.unsafe.6.0.0.nupkg.sha512"
+  ],
+  "logs": []
+}
