@@ -2,6 +2,7 @@ namespace Infrastructure;
 using Dapper;
 using Domain.Models;
 using Domain.Dtos;
+using Domain.Wrapper;
 using Npgsql;
 
 public class QuoteService
@@ -72,40 +73,40 @@ public class QuoteService
         }     
     }
 
-    public List<Quote> GetAllQuotesByCategory(int id)
+    public Responce<List<Quote>> GetAllQuotesByCategory(int id)
     {
        using (NpgsqlConnection connection = new NpgsqlConnection(_connectionString))
         {
             var quotes = connection.Query<Quote>($"select * from Quote where Id = {id};").ToList();
-            return quotes;
+            return new Responce<List<Quote>>(quotes);
         }
     }
 
-    public List<GetQuoteDto> GetQuoteWithCategory()
+    public Responce<List<GetQuoteDto>> GetQuoteWithCategory()
     {
         using (NpgsqlConnection connection = new NpgsqlConnection(_connectionString))
         {
             var sql = "select q.Id, q.Author, q.QuoteText, c.Name from Quote as q left join Category as c on c.Id = q.CategoryId;";
             var responce = connection.Query<GetQuoteDto>(sql);
-            return responce.ToList();
+            return new Responce<List<GetQuoteDto>>(responce.ToList());
         }
     }
 
-     public List<Quote> GetAllQuotes()
+     public Responce<List<Quote>> GetAllQuotes()
     {
         using(NpgsqlConnection connection = new NpgsqlConnection(_connectionString))
         {
             var quotes = connection.Query<Quote>("Select * From Quote").ToList();
-            return quotes;
+            return new Responce<List<Quote>>(quotes);
         }
     }
 
-     public List<Quote> GetRandomQuote()
+     public Responce<List<Quote>> GetRandomQuote()
     {
         using(NpgsqlConnection connection = new NpgsqlConnection(_connectionString))
         {
             var quotes = connection.Query<Quote>("select * from Quote order by random() limit 1").ToList();
-            return quotes;
+            return new Responce<List<Quote>>(quotes.ToList());
         }
     }
 }

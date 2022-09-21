@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Infrastructure;
 using Domain.Models;
 using Domain.Dtos;
+using Domain.Wrapper;
 namespace WebApi.Controllers;
 
 [ApiController]
@@ -15,25 +16,25 @@ public class QuoteController : ControllerBase
     }
 
     [HttpGet("GetAllQuotesByCategory")]
-    public List<Quote> GetAllQuotesByCategory(int id)
+    public Responce<List<Quote>> GetAllQuotesByCategory(int id)
     {
         return _quoteService.GetAllQuotesByCategory(id);
     }
 
     [HttpGet("GetQuoteWithCategory")]
-    public List<GetQuoteDto> GetQuoteWithCategory()
+    public Responce<List<GetQuoteDto>> GetQuoteWithCategory()
     {
         return _quoteService.GetQuoteWithCategory();
     }
 
     [HttpGet("GetAllQuotes")]
-    public List<Quote> GetAllQuotes()
+    public Responce<List<Quote>> GetAllQuotes()
     {
         return _quoteService.GetAllQuotes();
     }
 
     [HttpGet("GetRandomQuote")]
-    public List<Quote> GetRandomQuote()
+    public Responce<List<Quote>> GetRandomQuote()
     {
         return _quoteService.GetRandomQuote();
     }
