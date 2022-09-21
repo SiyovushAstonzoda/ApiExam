@@ -40,19 +40,19 @@ public class QuoteController : ControllerBase
     }
 
     [HttpPost("AddQuote")]
-    public int AddQuote(Quote quote)
+    public Responce<Quote> AddQuote(Quote quote)
     {
         return _quoteService.AddQuote(quote);
     }
 
     [HttpPut("UpdateQuote")]
-    public int UpdateQuote(Quote quote)
+    public Responce<Quote> UpdateQuote(Quote quote)
     {
         return _quoteService.UpdateQuote(quote);
     }
     
     [HttpDelete("DeleteQuote")]
-    public int DeleteQuote(int id)
+    public Responce<string> DeleteQuote(int id)
     {
         return _quoteService.DeleteQuote(id);
     }
