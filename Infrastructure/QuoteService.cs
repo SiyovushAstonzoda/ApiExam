@@ -85,7 +85,7 @@ public class QuoteService
     {
         using (NpgsqlConnection connection = new NpgsqlConnection(_connectionString))
         {
-            var sql = "select q.Id, q.Author, q.QuoteText, c.Name from Quote as q join Category as c on c.Id = q.CategoryId;";
+            var sql = "select q.Id, q.Author, q.QuoteText, c.Name from Quote as q left join Category as c on c.Id = q.CategoryId;";
             var responce = connection.Query<GetQuoteDto>(sql);
             return responce.ToList();
         }
