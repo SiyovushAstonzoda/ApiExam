@@ -15,9 +15,15 @@ public class QuoteController : ControllerBase
     }
 
     [HttpGet("GetAllQuotesByCategory")]
-    public List<GetQuoteDto> GetAllQuotesByCategory()
+    public List<Quote> GetAllQuotesByCategory(int id)
     {
-        return _quoteService.GetAllQuotesByCategory();
+        return _quoteService.GetAllQuotesByCategory(id);
+    }
+
+    [HttpGet("GetQuoteWithCategory")]
+    public List<GetQuoteDto> GetQuoteWithCategory()
+    {
+        return _quoteService.GetQuoteWithCategory();
     }
 
     [HttpGet("GetAllQuotes")]
@@ -43,7 +49,7 @@ public class QuoteController : ControllerBase
     {
         return _quoteService.UpdateQuote(quote);
     }
-
+    
     [HttpDelete("DeleteQuote")]
     public int DeleteQuote(int id)
     {
