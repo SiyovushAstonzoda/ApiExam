@@ -8,6 +8,7 @@ using Infrastructure.ServiceInterfaces;
 using Infrastructure.DataContext;
 using Microsoft.AspNetCore.Hosting;
 using Npgsql.Internal.TypeHandlers.GeometricHandlers;
+using Microsoft.AspNetCore.Http;
 
 public class QuoteService : IQuoteService
 {
@@ -26,29 +27,41 @@ public class QuoteService : IQuoteService
         {
             using var connection = _context.CreateConnection();
         {
-            var path  = Path.Combine(_environment.WebRootPath, "images", "posts", quote.QuoteImageFile.FileName);
-            using var stream = new FileStream(path, FileMode.Create);
-            await quote.QuoteImageFile.CopyToAsync(stream);
 
-            var sql = $"insert into Quote (Author, QuoteText, QuoteImage, CategoryId) VALUES (@Author, @QuoteText, @QuoteImage, @CategoryId) returning Id";
-            var response  = await connection.ExecuteScalarAsync<int>(sql, new{quote.Author, quote.QuoteText, QuoteImage = quote.QuoteImageFile.FileName, quote.CategoryId});
+            var sql = $"insert into Quote (Author, QuoteText, CategoryId) VALUES (@Author, @QuoteText, @CategoryId) returning Id";
+            var response  = await connection.ExecuteScalarAsync<int>(sql, new{quote.Author, quote.QuoteText, quote.CategoryId});
             quote.Id = response;
+
+            await InsertImage(quote.QuoteImageFiles, quote.Id);
+
             var getQuote = new GetQuoteDto
             {
                 Id = quote.Id,
                 Author = quote.Author,
                 QuoteText = quote.QuoteText,
-                QuoteImage = quote.QuoteImageFile.FileName,
                 CategoryId = quote.CategoryId
             };
             return new Responce<GetQuoteDto>(getQuote);
         }
         }
         catch (Exception e)
-        {
-            
+        {     
           return new Responce<GetQuoteDto>(System.Net.HttpStatusCode.InternalServerError, e.Message);
         }   
+    }
+
+    private async Task InsertImage(List<IFormFile> images, int quoteId)
+    {
+        foreach (var image in images)
+        {
+            var path  = Path.Combine(_environment.WebRootPath, "images", "posts", image.FileName);
+            using var stream = new FileStream(path, FileMode.Create);
+            await image.CopyToAsync(stream);
+
+            using var connection = _context.CreateConnection();
+            var sql = "insert into QuoteImages (QuoteId, ImageName) values (@QuoteId, @ImageName);";
+            await connection.ExecuteAsync(sql, new{QuoteId = quoteId, ImageName = image.FileName});
+        }
     }
 
     public async Task<Responce<Quote>> UpdateQuote(Quote quote)
@@ -114,8 +127,21 @@ public class QuoteService : IQuoteService
         {
             var sql = "Select * From Quote";
             var quotes = await connection.QueryAsync<Quote>(sql);
+            foreach (var quote in quotes)
+            {
+                var images = await GetImages(quote.Id);
+                quote.QuoteImages = images;
+            }
             return new Responce<List<Quote>>(quotes.ToList());
         }
+    }
+
+     private async Task<List<string>> GetImages(int quoteId)
+    {
+        await using var connection = _context.CreateConnection();
+        var sql = "select q.imagename  from quoteimages q  where quoteid = @quoteId";
+        var result = await connection.QueryAsync<string>(sql, new {quoteId});
+        return result.ToList();
     }
 
      public async Task<Responce<List<Quote>>> GetRandomQuote()
