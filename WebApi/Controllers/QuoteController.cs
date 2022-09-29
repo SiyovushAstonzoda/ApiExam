@@ -1,59 +1,61 @@
 using Microsoft.AspNetCore.Mvc;
-using Infrastructure;
 using Domain.Models;
 using Domain.Dtos;
 using Domain.Wrapper;
+using Infrastructure.DataContext;
+using Infrastructure.ServiceInterfaces;
+using Infrastructure.Services;
 namespace WebApi.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
 public class QuoteController : ControllerBase
 {
-    private QuoteService _quoteService;
-    public QuoteController()
+    private readonly IQuoteService _quoteService;
+    public QuoteController(IQuoteService quoteService)
     {
-        _quoteService = new QuoteService();
+        _quoteService = quoteService;
     }
 
     [HttpGet("GetAllQuotesByCategory")]
-    public Responce<List<Quote>> GetAllQuotesByCategory(int id)
+    public async Task<Responce<List<Quote>>> GetAllQuotesByCategory(int id)
     {
-        return _quoteService.GetAllQuotesByCategory(id);
+        return await _quoteService.GetAllQuotesByCategory(id);
     }
 
     [HttpGet("GetQuoteWithCategory")]
-    public Responce<List<GetQuoteDto>> GetQuoteWithCategory()
+    public async Task<Responce<List<QuoteCategoryDto>>> GetQuoteWithCategory()
     {
-        return _quoteService.GetQuoteWithCategory();
+        return await _quoteService.GetQuoteWithCategory();
     }
 
     [HttpGet("GetAllQuotes")]
-    public Responce<List<Quote>> GetAllQuotes()
+    public async Task<Responce<List<Quote>>> GetAllQuotes()
     {
-        return _quoteService.GetAllQuotes();
+        return await _quoteService.GetAllQuotes();
     }
 
     [HttpGet("GetRandomQuote")]
-    public Responce<List<Quote>> GetRandomQuote()
+    public async Task<Responce<List<Quote>>> GetRandomQuote()
     {
-        return _quoteService.GetRandomQuote();
+        return await _quoteService.GetRandomQuote();
     }
 
     [HttpPost("AddQuote")]
-    public Responce<Quote> AddQuote(Quote quote)
+    public async Task<Responce<GetQuoteDto>> AddQuote([FromForm]CreateQuoteDto quote)
     {
-        return _quoteService.AddQuote(quote);
+        return await _quoteService.AddQuote(quote);
     }
 
     [HttpPut("UpdateQuote")]
-    public Responce<Quote> UpdateQuote(Quote quote)
+    public async Task<Responce<Quote>> UpdateQuote(Quote quote)
     {
-        return _quoteService.UpdateQuote(quote);
+        return await _quoteService.UpdateQuote(quote);
     }
     
     [HttpDelete("DeleteQuote")]
-    public Responce<string> DeleteQuote(int id)
+    public async Task<Responce<string>> DeleteQuote(int id)
     {
-        return _quoteService.DeleteQuote(id);
+        return await _quoteService.DeleteQuote(id);
     }
 }
